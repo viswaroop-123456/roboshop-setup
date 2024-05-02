@@ -1,6 +1,6 @@
 source common.sh
 print_head "setup mongodb repository"
-cp ${cod_dir}/config/mongodb.repo /etc/yum.repos.d/mongo.repo &>>${log_file}
+cp ${cod_dir}/roboshop-set/config/mongodb.repo /etc/yum.repos.d/mongo.repo &>>${log_file}
 
 print_head "install mongodb"
 dnf install mongodb-org -y &>>${log_file}
