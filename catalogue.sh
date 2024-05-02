@@ -17,7 +17,7 @@ print_head "delete old content"
 rm -rf /app/* &>>${log_file}
 
 print_head "downloading app content"
-curl -o /tmp/catalogue.zip https://roboshop-artifacts.s3.amazonaws.com/catalogue.zip &>>${log_file}
+curl -L -o /tmp/catalogue.zip https://roboshop-artifacts.s3.amazonaws.com/catalogue.zip &>>${log_file}
 cd /app
 
 print_head "extracting app content"
@@ -40,7 +40,7 @@ print_head "start catalogue services"
 systemctl restart catalogue &>>${log_file}
 
 print_head "copy mongodb services"
-cp ${cod_dir}/config/mongodb.repo /etc/yum.repos.d/mongo.repo &>>${log_file}
+cp ${cod_dir}/config/mongodb.repo /etc/yum.repos.d/mongodb.repo &>>${log_file}
 
 print_head "install mongo client"
 dnf install mongodb-org-shell -y &>>${log_file}
