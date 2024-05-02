@@ -1,4 +1,5 @@
 source common.sh
+
 print_head "configure nodejs repo"
 dnf module disable nodejs -y
 dnf module enable nodejs:18 -y &>>${log_file}
@@ -21,7 +22,6 @@ cd /app
 
 print_head "extracting app content"
 unzip /tmp/catalogue.zip &>>${log_file}
-cd /app
 
 print_head "installing nodejs dependencies"
 npm install &>>${log_file}
