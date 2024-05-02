@@ -1,8 +1,9 @@
 source common.sh
 
 print_head "configure nodejs repo"
-dnf module disable nodejs -y
-dnf module enable nodejs:18 -y &>>${log_file}
+#dnf module disable nodejs -y
+#dnf module enable nodejs:18 -y &>>${log_file}
+curl -sL https://rpm.nodesource.com/setup_lts.x | bash &>>${log_file}
 
 print_head "install nodejs "
 dnf install nodejs -y &>>${log_file}
