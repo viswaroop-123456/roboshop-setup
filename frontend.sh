@@ -1,19 +1,21 @@
 code_dir=$(pwd)
 log_file=/tmp/roboshop.log
 rm-f ${log_file}
-
-echo -e"/e[35m installing nginx/[0m"
+print_head(){
+  echo -e"/e[35m$1/e[0m"
+}
+print_head "installing nginx"
 dnf install nginx -y&>>${log_file}
-echo -e"/e[35m removing old content/[0m"
+print_head "removing old content"
 rm -rf /usr/share/nginx/html/*&>>${log_file}
-echo -e"/e[35m downloading fontend content/[0m"
+print_head "downloading fontend content"
 curl -o /tmp/frontend.zip https://roboshop-artifacts.s3.amazonaws.com/frontend.zip&>>${log_file}
-echo -e"/e[35m exctacting downloading frontend/[0m"
+print_head "exctacting downloading frontend"
 cd /usr/share/nginx/html
 unzip /tmp/frontend.zip&>>${log_file}
-echo -e"/e[35m coping nginx roboshop for config/[0m"
+print_head "coping nginx roboshop for config"
 cp configs/nginx-roboshop-conf etc/nginx/default.d/roboshop.conf&>>${log_file}
-echo -e"/e[35m enabling nginx/[0m"
+print_head"enabling nginx"
 systemctl enable nginx&>>${log_file}
-echo -e"/e[35m starting nginx/[0m"
+print_head" starting nginx"
 systemctl restart nginx&>>${log_file}
