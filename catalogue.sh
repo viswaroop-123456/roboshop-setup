@@ -1,3 +1,4 @@
+source common.sh
 dnf module disable nodejs -y
 dnf module enable nodejs:18 -y
 dnf install nodejs -y
