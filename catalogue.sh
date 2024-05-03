@@ -9,7 +9,10 @@ print_head "install nodejs "
 dnf install nodejs -y &>>${log_file}
 
 print_head "create roboshop user"
+id roboshop &>>${log_file}
+if [ $? -ne 0 ]; then
 useradd roboshop &>>${log_file}
+fi
 
 print_head "make directory"
 mkdir /app &>>${log_file}
