@@ -17,7 +17,25 @@ status_check(){
     fi
 
 }
-NODEJS(){
+
+schema_setup()
+{
+  if [ "${schema_type}" == "mongo"]; then
+
+  print_head "copy mongo repo file "
+  cp ${cod_dir}/config/mongodb.repo /etc/yum.repos.d/mongodb.repo &>>${log_file}
+  status_check $?
+
+  print_head "install mongo client"
+  dnf install mongodb-org-shell -y &>>${log_file}
+  status_check $?
+
+  print_head "load schema"
+  mongo --host mongodb.devopsbatch.cloud </app/schema/${component}.js &>>${log_file}
+  status_check $?
+  fi
+}
+nodejs(){
 print_head "configure nodejs repo"
 #dnf module disable nodejs -y
 #dnf module enable nodejs:18 -y &>>${log_file}
@@ -74,17 +92,7 @@ print_head "start ${component} services"
 systemctl restart ${component} &>>${log_file}
 status_check $?
 
-print_head "copy mongo repo file "
-cp ${cod_dir}/config/mongodb.repo /etc/yum.repos.d/mongodb.repo &>>${log_file}
-status_check $?
-
-print_head "install mongo client"
-dnf install mongodb-org-shell -y &>>${log_file}
-status_check $?
-
-print_head "load schema"
-mongo --host mongodb.devopsbatch.cloud </app/schema/${component}.js &>>${log_file}
-status_check $?
+schema_setup
 
 }
 
