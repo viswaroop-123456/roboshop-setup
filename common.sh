@@ -1,10 +1,9 @@
 cod_dir=$(pwd)
-
 log_file=/tmp/roboshop.log
 rm -f ${log_file}
 
 print_head(){
-  echo -e " \e[35m$1\e[0m "
+  echo -e " \e[36m$1\e[0m "
 }
 
 status_check(){
@@ -22,6 +21,8 @@ systemd_setup(){
   cp ${cod_dir}/config/${component}.service /etc/systemd/system/${component}.service &>>${log_file}
   status_check $?
 
+sed -i -e "s/ROBOSHOP_USER_PASSWORD/${roboshop_app_password}/" /etc/systemd/system/${component}.service &>>${log_file}
+
   print_head "reload systemd"
   systemctl daemon-reload &>>${log_file}
   status_check $?
@@ -30,26 +31,29 @@ systemd_setup(){
   systemctl enable ${component} &>>${log_file}
   status_check $?
 
-  print_head "restart ${component} services"
+  print_head "start ${component} services"
   systemctl restart ${component} &>>${log_file}
   status_check $?
 
 }
 schema_setup(){
   if [ "${schema_type}" == "mongo" ]; then
-  print_head "copy mongo repo file "
+  print_head "copy mongodb repo file "
   cp ${cod_dir}/config/mongodb.repo /etc/yum.repos.d/mongodb.repo &>>${log_file}
   status_check $?
+
   print_head "install mongo client"
   dnf install mongodb-org-shell -y &>>${log_file}
   status_check $?
+
   print_head "load schema"
   mongo --host mongodb.devopsbatch.cloud </app/schema/${component}.js &>>${log_file}
   status_check $?
   elif [ "${schema_type}" == "mysql" ]; then
-    print_head "install mysql schema"
-    dnf install mysql -y
+    print_head "install mysql client"
+    dnf install mysql -y &>>${log_file}
     status_check $?
+
     print_head "load schema"
     mysql -h mysql.devopsbatch.cloud -uroot -p${mysql_root_password} < /app/schema/shipping.sql &>>${log_file}
     status_check $?
@@ -63,7 +67,7 @@ app_prereq_setup(){
   fi
   status_check $?
 
-  print_head "make directory"
+  print_head "application directory"
   if [ ! -d /app ]; then
   mkdir /app &>>${log_file}
   fi
@@ -75,8 +79,8 @@ app_prereq_setup(){
 
   print_head "downloading app content"
   curl -L -o /tmp/${component}.zip https://roboshop-artifacts.s3.amazonaws.com/${component}.zip &>>${log_file}
-  cd /app
   status_check $?
+  cd /app
 
   print_head "extracting app content"
   unzip /tmp/${component}.zip &>>${log_file}
@@ -115,7 +119,7 @@ status_check $?
 app_prereq_setup
 
 print_head"downloading dependencies & packages"
-mvn clean package
+mvn clean package &>>${log_file}
 mv target/${component}-1.0.jar ${component}.jar &>>${log_file}
 
  schema_setup
