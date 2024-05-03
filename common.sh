@@ -118,7 +118,7 @@ status_check $?
 
 app_prereq_setup
 
-print_head"downloading dependencies & packages"
+print_head "downloading dependencies & packages"
 mvn clean package &>>${log_file}
 mv target/${component}-1.0.jar ${component}.jar &>>${log_file}
 
