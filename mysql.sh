@@ -14,7 +14,6 @@ print_head "coping mysql repo file"
 cp ${cod_dir}/config/mysql.repo /etc/yum.repos.d/mysql.repo &>>${log_file}
 status_check $?
 
-
 print_head "installing mysql server"
 dnf install mysql-community-server -y &>>${log_file}
 status_check $?
